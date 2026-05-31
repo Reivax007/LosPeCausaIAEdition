@@ -4,9 +4,9 @@ services:
     image: postgres:15-alpine
     restart: always
     environment:
-      POSTGRES_DB: agrocompliance_db
-      POSTGRES_USER: agro_user
-      POSTGRES_PASSWORD: agro_password_segura
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -14,13 +14,12 @@ services:
 
   # ─── SPRING BOOT BACKEND ───────────────────────
   spring-boot:
-    build: . # Asume que tu Dockerfile de Spring Boot está en la misma carpeta
+    build: .
     restart: always
     environment:
-      # Aquí solucionamos el error: Conectamos Spring Boot con Postgres
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/agrocompliance_db
-      - SPRING_DATASOURCE_USERNAME=agro_user
-      - SPRING_DATASOURCE_PASSWORD=agro_password_segura
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     networks:
       - frontend-network
@@ -33,12 +32,12 @@ services:
     image: n8nio/n8n
     restart: always
     environment:
-      - GENERIC_TIMEZONE=America/La_Paz # Ajustado a tu zona horaria
+      - GENERIC_TIMEZONE=${TIMEZONE}
       - N8N_PATH=/n8n/
-      - WEBHOOK_URL=https://tudominio.com/n8n/
+      - WEBHOOK_URL=https://${DOMAIN_NAME}/n8n/
     volumes:
       - n8n_data:/home/node/.n8n
-      - files_data:/files # Para leer/escribir PDFs o documentos legales
+      - files_data:/files
     networks:
       - n8n-network
 
@@ -50,7 +49,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./frontend/build:/usr/share/nginx/html:ro # Tu React/Frontend ya compilado
+      - ./frontend/build:/usr/share/nginx/html:ro
       - certbot-certs:/etc/letsencrypt:ro
       - certbot-www:/var/www/certbot:ro
     networks:
