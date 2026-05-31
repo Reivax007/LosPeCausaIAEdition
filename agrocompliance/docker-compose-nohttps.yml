@@ -37,9 +37,15 @@ services:
       - WEBHOOK_URL=http://${DOMAIN_NAME}/n8n/
       # ↓ Agregamos esta línea para permitir acceso por HTTP en el MVP
       - N8N_SECURE_COOKIE=false
+      # ↓ Variables para manejo optimizado de archivos y ejecución
+      - N8N_ALLOW_EXEC=true
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
+      - N8N_BINARY_DATA_STORAGE_PATH=/home/node/.n8n/binaryData
+      - N8N_USER_FOLDER=/home/node/.n8n
     volumes:
       - n8n_data:/home/node/.n8n
-      - files_data:/files
+      # ↓ Bind mount hacia la carpeta física en tu servidor (EC2)
+      - /home/ec2-user/leyes:/files/leyes
     networks:
       - n8n-network
 
@@ -68,7 +74,7 @@ services:
 volumes:
   postgres_data:
   n8n_data:
-  files_data:
+  # files_data ha sido eliminado porque ahora se usa un bind mount directo
 
 networks:
   frontend-network:
