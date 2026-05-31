@@ -1,0 +1,360 @@
+{
+  "name": "chat_evasion_de_impuesto",
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "id",
+          "value": "vector_store_key"
+        },
+        "clearStore": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        624,
+        0
+      ],
+      "id": "2cdb259a-a19f-4fa0-8295-36d72fdbd633",
+      "name": "Simple Vector Store"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        560,
+        192
+      ],
+      "id": "b1616b3e-e06d-40a7-a12e-9af8a4f8c4a0",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "orountvQXuH3rvRn",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $('Extract from File').item.json.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        768,
+        208
+      ],
+      "id": "5902b9b8-224f-452f-a8d0-e019658f5aa4",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 150,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        736,
+        352
+      ],
+      "id": "11517e22-5fd4-4d0c-bbae-1d4191237035",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "options": {
+          "allowFileUploads": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        1152,
+        16
+      ],
+      "id": "007a1ecf-9f1f-49c8-84d3-925aa5225ded",
+      "name": "When chat message received",
+      "webhookId": "987ccf76-7b97-4b92-9e6a-2c2e245be5f3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMinimax",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        256
+      ],
+      "id": "ff51fca9-638c-4f65-8a65-8ae2b9c640b9",
+      "name": "MiniMax Chat Model",
+      "credentials": {
+        "minimaxApi": {
+          "id": "ZOrCDycpMkBcTXjq",
+          "name": "MiniMax account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1408,
+        288
+      ],
+      "id": "4a55916a-9221-4b5b-9e5f-2fb822af1271",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=## ROL\nEres un asistente legal tributario especializado en el sector \nagropecuario de Bolivia, con conocimiento profundo del Régimen \nAgropecuario Unificado (RAU) y las Resoluciones Normativas de \nDirectorio (RND) del Servicio de Impuestos Nacionales (SIN).\n\n## FUENTES DE CONOCIMIENTO\nTienes acceso a DOS fuentes de información:\n1. **Base de conocimiento RND** (Simple Vector Store1): contiene \n   todas las RNDs del SIN Bolivia.\n2. **Documentos del cliente**: archivos que el usuario sube \n   directamente (contratos, registros de empresa, facturas, \n   escrituras, etc.).\n\n## TU FUNCIÓN\n- Responder preguntas legales-tributarias del sector agropecuario.\n- SIEMPRE consultar \"Simple Vector Store1\" antes de responder.\n- Analizar los documentos que el cliente sube y cruzarlos con \n  la normativa vigente de las RNDs.\n- Identificar obligaciones tributarias, plazos, cuotas RAU y \n  posibles irregularidades según los documentos del cliente.\n- Citar SIEMPRE el artículo, cláusula, sección o número de RND \n  del que proviene la información.\n\n## REGLAS ESTRICTAS\n- SIEMPRE usa \"Simple Vector Store1\" antes de responder.\n- NUNCA respondas con conocimiento propio o externo no respaldado.\n- NUNCA inventes artículos, leyes o normativas.\n- NUNCA des opiniones personales.\n- Si la herramienta no devuelve resultados relevantes, responde: \n  \"No encontré información sobre esto en los documentos legales \n  disponibles.\"\n- Si el cliente sube un documento, analízalo en relación a la \n  normativa RAU/RND vigente.\n- Si la pregunta es ambigua, pide más detalles antes de buscar.\n- Responde SIEMPRE en español.\n- Sé claro, preciso y accesible para productores agropecuarios \n  que no son expertos en derecho tributario.\n\n## CUANDO EL CLIENTE SUBE UN DOCUMENTO\n1. Confirma qué tipo de documento recibiste.\n2. Extrae los datos relevantes: razón social, NIT, actividad, \n   superficie en hectáreas, zona geográfica, fechas.\n3. Cruza esos datos con la normativa RAU/RND correspondiente.\n4. Indica si el cliente está al día con sus obligaciones o si \n   hay algo que regularizar.\n\n## FORMATO DE RESPUESTA\n1. **Respuesta directa** basada en los documentos y la normativa\n2. **Fuente:** [Número de RND / artículo / sección]\n3. **Aplicación al caso del cliente:** [cómo aplica a su situación \n   específica según los documentos que subió]\n4. **Advertencia:** \"Esta información es de referencia. \n   Consulte a un profesional legal o tributario habilitado.\"\n¿Cuánto debe pagar de RAU el arrendatario Pedro Flores por la Gestión 2024 según su predio en Warnes?\n{{ $('When chat message received').item.json.chatInput }}\nsi tiene un contrato es este:\n{{ $json.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1584,
+        16
+      ],
+      "id": "325e35a4-9576-4053-8b8f-634e07050f83",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Base de conocimiento de leyes y contratos. \nÚsala cuando necesites consultar artículos, \ncláusulas, normativas o términos legales.",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        1568,
+        240
+      ],
+      "id": "eb913b91-455d-4884-9b5c-b9e8e5c63ccc",
+      "name": "Simple Vector Store1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-2"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        416
+      ],
+      "id": "b715682a-c1cf-49d7-8a19-9546ce15fc27",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "orountvQXuH3rvRn",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        16
+      ],
+      "id": "c834cc2f-4b55-4832-8e82-35963ae16533",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "https://drive.google.com/file/d/1gRjHClsXZZB1JT0ovX4HCcVlHEkTkuOl/view?usp=drive_link",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        144,
+        16
+      ],
+      "id": "aa513dfe-8dd4-4272-87f3-27230d304224",
+      "name": "Download file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "xPIb1YqVs1K4Kq6I",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "data0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        1376,
+        16
+      ],
+      "id": "eecf0017-7cae-4a4b-b600-9c2993593f4f",
+      "name": "Extract from File2",
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        []
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Extract from File2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MiniMax Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Simple Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Download file1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "45b027ef-9618-4d34-bc65-4d6ff5abcca6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "949b04233bf476883d1959b5e9600bbce15bf6913118d0223fe4147f0364026f"
+  },
+  "id": "uYQMy2jRhJsK3JsQ",
+  "tags": []
+}
