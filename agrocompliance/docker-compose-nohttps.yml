@@ -34,7 +34,6 @@ services:
     environment:
       - GENERIC_TIMEZONE=${TIMEZONE}
       - N8N_PATH=/n8n/
-      # ↓ Cambiado temporalmente a HTTP
       - WEBHOOK_URL=http://${DOMAIN_NAME}/n8n/
     volumes:
       - n8n_data:/home/node/.n8n
@@ -47,14 +46,13 @@ services:
     image: nginx:alpine
     ports:
       - "80:80"
-      # ↓ Puerto 443 comentado temporalmente
-      # - "443:443"
+    environment:
+      # Pasamos la variable del .env hacia adentro del contenedor
+      - DOMAIN_NAME=${DOMAIN_NAME}
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # Montamos el archivo como plantilla para que Nginx inyecte la variable
+      - ./nginx/nginx.conf:/etc/nginx/templates/default.conf.template:ro
       - ./frontend/build:/usr/share/nginx/html:ro
-      # ↓ Volúmenes de certificados comentados temporalmente
-      # - certbot-certs:/etc/letsencrypt:ro
-      # - certbot-www:/var/www/certbot:ro
     networks:
       - frontend-network
       - backend-network
@@ -64,34 +62,11 @@ services:
       - n8n
     restart: always
 
-  # ─── CERTBOT (Certificados SSL) ────────────────
-  # ↓ Todo el bloque de Certbot comentado temporalmente para el MVP
-  # certbot:
-  #   image: certbot/certbot:latest
-  #   volumes:
-  #     - certbot-certs:/etc/letsencrypt
-  #     - certbot-www:/var/www/certbot
-  #   entrypoint: >
-  #     /bin/sh -c "
-  #       trap exit TERM;
-  #       while :; do
-  #         certbot renew --webroot
-  #                       --webroot-path=/var/www/certbot
-  #                       --quiet;
-  #         sleep 12h &
-  #         wait $${!};
-  #       done
-  #     "
-  #   restart: always
-
 # ─── VOLÚMENES Y REDES ───────────────────────────
 volumes:
   postgres_data:
   n8n_data:
   files_data:
-  # ↓ Volúmenes mantenidos para cuando actives SSL, Docker los creará vacíos
-  certbot-certs:
-  certbot-www:
 
 networks:
   frontend-network:
