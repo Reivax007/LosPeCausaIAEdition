@@ -35,6 +35,8 @@ services:
       - GENERIC_TIMEZONE=${TIMEZONE}
       - N8N_PATH=/n8n/
       - WEBHOOK_URL=http://${DOMAIN_NAME}/n8n/
+      # ↓ Agregamos esta línea para permitir acceso por HTTP en el MVP
+      - N8N_SECURE_COOKIE=false
     volumes:
       - n8n_data:/home/node/.n8n
       - files_data:/files
