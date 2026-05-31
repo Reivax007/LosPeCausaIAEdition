@@ -50,7 +50,12 @@ chmod +x ~/.docker/cli-plugins/docker-buildx
 # 4. Verificar que la instalación de Docker Compose funciona:
 docker compose version
 
+```
+
 # 5. Es necesario un archivo para la configuracion del proyecto el archivo se debe crear con el nombre .env y debe tener la siguiente configuracion
+
+
+```bash
 # ─── BASE DE DATOS ──────────────────────────
 POSTGRES_DB=agrocompliance_db
 POSTGRES_USER=tu_usuario_seguro
@@ -59,4 +64,49 @@ POSTGRES_PASSWORD=tu_password_seguro
 # ─── CONFIGURACIÓN GENERAL ──────────────────
 # Reemplaza por la IP pública del servidor o tu dominio (ej. 54.81.75.219 o app.empresa.com)
 DOMAIN_NAME=TU_IP_O_DOMINIO
-TIMEZONE=America/La_Paz 
+TIMEZONE=America/La_Paz
+
+```
+
+
+#Fase 2: Flujo del proyecto
+```mermaid
+graph TD
+    %% Definición de Roles
+    subgraph Roles del Sistema
+        AGR[Usuario Agrónomo / Cliente]
+        CON[Usuario Consultor / Experto]
+        ADM[Administrador AgroCompliance]
+        SOP[Equipo de Soporte]
+    end
+
+    %% Flujo del Agrónomo
+    AGR -->|1. Ingresa solo Username| INI[Ingreso MVP sin password]
+    INI -->|2. Rellena| PERF[Perfil: NIT, Razón Social, Rubro, Inversión, Trabajadores]
+    PERF -->|3. Selecciona| CSELEC{Tipo de Consultoría}
+    
+    CSELEC -->|Entidades / Impuestos / Contratos / Inversionistas| CIA[Chatbot con IA + RNDs Públicas]
+    CIA -->|4. Conversación RAG| EVAL{¿IA respondió bien?}
+    
+    EVAL -->|Sí: Acepta respuesta| PF[El Paso Final: Solicitar Consultor]
+    PF -->|5. Backend registra solicitud| DB_REQ[(Postgres: Solicitudes Pendientes)]
+
+    %% Flujo del Consultor
+    DB_REQ -->|6. Visualiza pendientes| CON
+    CON -->|7. IA genera| SUM[Resumen automático de la charla previa]
+    SUM -->|8. Diseña y envía| PLAN[Plan de Trabajo Inicial]
+    
+    PLAN -->|9. Abre canal directo| CHAT_ROOM[Sala de Chat Cooperativa]
+    AGR <-->|Discusión y Ajustes| CHAT_ROOM
+    CON <-->|Discusión y Ajustes| CHAT_ROOM
+    
+    CHAT_ROOM -->|Mantenimiento de contexto| IA_BACK[IA guarda el historial silenciosamente]
+    CHAT_ROOM -->|Invocación directa con @IA| IA_CALL[Asistente IA responde en el Chat]
+
+    %% Flujo de Administración y Soporte
+    ADM -->|Control de Calidad| BAN[Dar de baja usuarios / Mal uso]
+    BAN -.-> INI
+    
+    AGR -.->|Reporta problema| TICKET[Sistema de Tickets]
+    CON -.->|Reporta problema| TICKET
+    TICKET --> SOP -->|Atención y Solución| CHAT_ROOM
