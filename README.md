@@ -49,3 +49,14 @@ chmod +x ~/.docker/cli-plugins/docker-buildx
 
 # 4. Verificar que la instalación de Docker Compose funciona:
 docker compose version
+
+# 5. Es necesario un archivo para la configuracion del proyecto el archivo se debe crear con el nombre .env y debe tener la siguiente configuracion
+# ─── BASE DE DATOS ──────────────────────────
+POSTGRES_DB=agrocompliance_db
+POSTGRES_USER=tu_usuario_seguro
+POSTGRES_PASSWORD=tu_password_seguro
+
+# ─── CONFIGURACIÓN GENERAL ──────────────────
+# Reemplaza por la IP pública del servidor o tu dominio (ej. 54.81.75.219 o app.empresa.com)
+DOMAIN_NAME=TU_IP_O_DOMINIO
+TIMEZONE=America/La_Paz 
