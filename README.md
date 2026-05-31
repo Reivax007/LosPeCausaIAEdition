@@ -110,3 +110,13 @@ graph TD
     AGR -.->|Reporta problema| TICKET[Sistema de Tickets]
     CON -.->|Reporta problema| TICKET
     TICKET --> SOP -->|Atención y Solución| CHAT_ROOM
+```
+
+Los PeCausas IA Edition
+
+Jorge Medellin
+Gabriel Bodomir
+Sergio Cruz
+Xavier Vaca
+Joaquin Caballero
+Freddy Leon
