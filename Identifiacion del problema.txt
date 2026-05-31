@@ -1,0 +1,10 @@
+Identificación del Problema y Origen de la Solución
+El nacimiento de AgroCompliance no surge de una teoría de laboratorio, sino de la validación empírica y las fricciones reales del día a día en el campo. La conceptualización de la plataforma responde a cuatro factores críticos actuales:
+
+Contexto y Situación País: La alta volatilidad regulatoria, los constantes cambios en las normativas impositivas y las exigencias de entidades nacionales (como Senasag o el Ministerio de Trabajo) crean un entorno hostil para el productor, donde el desconocimiento se traduce rápidamente en multas severas o bloqueos operativos.
+
+Aislamiento y Trabajo de Campo (Experiencia Propia): La labor agrícola y ganadera se desarrolla en zonas alejadas de los centros urbanos. El productor no tiene el tiempo físico para trasladarse a la ciudad a realizar consultas legales. Existe una necesidad latente de contar con una herramienta asíncrona y disponible 24/7, a la cual se pueda consultar directamente desde el campo durante los pequeños ratos libres o de descanso.
+
+Desconfianza en la Oferta de Consultores: Existe un alto grado de escepticismo en el sector rural al momento de contratar asesores legales o contables debido a malas experiencias previas, cobros excesivos o falta de conocimiento específico en el rubro agropecuario. El mercado exige una entidad u organización tecnológica (AgroCompliance) que actúe como filtro, brinde respaldo y garantice la calidad e idoneidad de los profesionales contratados.
+
+Accesibilidad y Cero Fricción Tecnológica: Para que la adopción sea real en el sector rural, la barrera de entrada debe ser nula. La solución es viable y altamente aplicable porque es completamente gratuita para el productor (subsidiada por gremios y bancos) y funciona como un sistema web responsivo. No requiere la instalación de aplicaciones pesadas, actualizaciones complejas, ni consumir almacenamiento en el celular del usuario; basta con un navegador web y conexión a internet para acceder a toda la plataforma.
